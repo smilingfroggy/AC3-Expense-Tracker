@@ -10,6 +10,8 @@ require('./config/mongoose')
 // set handlebars
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
+app.use(express.static("public"))
+app.use(express.urlencoded({ extended: true }))
 
 // set router
 app.use(routes)
