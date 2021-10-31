@@ -110,7 +110,7 @@ router.put('/:recordId', (req, res) => {
   Categories.findOne({ name: category })
     .then(cat => {
       if (cat) {
-        Records.findOne({ recordId })
+        Records.findOne({ _id: recordId })
           .then(record => {
             record.name = name
             record.date = date
@@ -125,7 +125,7 @@ router.put('/:recordId', (req, res) => {
           name: category
         })
           .then(cat => {
-            Records.findOne({ recordId })
+            Records.findOne({ _id: recordId })
               .then(record => {
                 record.name = name
                 record.date = date
@@ -143,7 +143,15 @@ router.put('/:recordId', (req, res) => {
 
 // delete record
 router.delete('/:recordId', (req, res) => {
-  res.send('delete page')
+  const recordId = req.params.recordId
+  console.log("request to detete ID: ", recordId)
+  Records.findOne({ _id: recordId })
+    .then(record => {
+      console.log(record.name, "deleting")
+      record.remove()
+    })
+    .then(() => res.redirect('/'))
+    .catch(err => console.log(err))
 })
 
 module.exports = router
