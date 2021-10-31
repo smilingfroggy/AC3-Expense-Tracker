@@ -1,9 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const Records = require('../../models/records')
-const UserId = require('../../models/users')
+const Users = require('../../models/users')
 const Categories = require('../../models/categories')
-const users = require('../../models/users')
 
 // create page
 router.get('/new', (req, res) => {
