@@ -3,6 +3,7 @@ const router = express.Router()
 const Records = require('../../models/records')
 const UserId = require('../../models/users')
 const Categories = require('../../models/categories')
+const users = require('../../models/users')
 
 // create page
 router.get('/new', (req, res) => {
@@ -42,7 +43,7 @@ router.post('/new', (req, res) => {
           name: category
         })
           .then(cat => {
-            console.log(`Created #{cat.name}`)
+            console.log(`Created ${cat.name}`)
             Records.create({
               name, date, categoryId: cat._id, amount,
               // TODO: userId: user._id
@@ -59,7 +60,19 @@ router.post('/new', (req, res) => {
 
 // edit page
 router.get('/edit/:recordId', (req, res) => {
-  res.send('Edit page')
+  console.log(req.params) //{ recordId: '617849e7af42cee21bdbfacb' }
+  const recordId = req.params.recordId
+  // const userId = req.body.userId
+  // Users.findOne({ userId })
+  Records.findOne({ _id: recordId })
+    .lean()
+    .then(record => {
+      const { name, date, categoryId, amount } = record
+      console.log(name, date, categoryId, amount)
+      res.render('edit', { name, date, categoryId, amount })
+    })
+  
+  // res.send('Edit page')
 })
 
 router.put('/:recordId', (req, res) => {
