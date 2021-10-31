@@ -60,23 +60,85 @@ router.post('/new', (req, res) => {
 
 // edit page
 router.get('/edit/:recordId', (req, res) => {
-  console.log(req.params) //{ recordId: '617849e7af42cee21bdbfacb' }
   const recordId = req.params.recordId
   // const userId = req.body.userId
   // Users.findOne({ userId })
   Records.findOne({ _id: recordId })
     .lean()
     .then(record => {
-      const { name, date, categoryId, amount } = record
-      console.log(name, date, categoryId, amount)
-      res.render('edit', { name, date, categoryId, amount })
+      // TODO: 日期格式轉換成 YYYY - MM - DD
+      console.log(record.date.toString())   //Tue Apr 23 2019 00:00:00 GMT+0800 (台北標準時間
+      let dateStr = record.date.toString().slice(4, 15)  //Apr 23 2019
+      let months = {
+        "Jen": 01,
+        "Feb": 02,
+        "Mar": 03,
+        "Apr": 04,
+        "May": 05,
+        "Jun": 06,
+        "Jul": 07,
+        "Aug": 08,
+        "Sep": 09,
+        "Oct": 10,
+        "Nov": 11,
+        "Dec": 12
+      }
+      // for ( let month in months ) {
+      //   if (month == dateStr.slice(0, 3)) {   //problem: 找不到相月份，formattedDate is undefined
+      //     let formattedDate = dateStr.slice(7,11) + "-" + months[month].toString() + "-" + dateStr.slice(4,6)
+      //   }
+      // }
+      // console.log(formattedDate)
+      Categories.find()
+        .lean()
+        .then(categories => {
+          Categories.findOne({ _id: record.categoryId })
+            .lean()
+            .then(cat => {
+              // console.log(cat)
+              res.render('edit', { record, dateStr, categories, cat })
+            })
+        })
     })
-  
-  // res.send('Edit page')
+    .catch(err => { console.log(err) })
 })
 
 router.put('/:recordId', (req, res) => {
-  res.send('Edit page')
+  const { name, date, category, amount } = req.body
+  const recordId = req.params.recordId
+  // if category is not in Categories => create first
+  Categories.findOne({ name: category })
+    .then(cat => {
+      if (cat) {
+        Records.findOne({ recordId })
+          .then(record => {
+            record.name = name
+            record.date = date
+            record.categoryId = cat._id
+            record.amount = amount
+            return record.save()
+          })
+        console.log(`Updated ${name} record`)
+      }
+      else {
+        Categories.create({
+          name: category
+        })
+          .then(cat => {
+            Records.findOne({ recordId })
+              .then(record => {
+                record.name = name
+                record.date = date
+                record.categoryId = cat._id
+                record.amount = amount
+                return record.save()
+              })
+            console.log(`Updated ${name} record`)
+          })
+      }
+    })
+    .then(() => res.redirect('/'))
+    .catch(err => console.log(err))
 })
 
 // delete record

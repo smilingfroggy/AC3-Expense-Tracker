@@ -1,0 +1,56 @@
+<div class="title d-flex justify-content-center">
+  <h3 class="">請輸入您的支出</h3>
+
+</div>
+<p class="mb-5"><span class="requiredInput">*</span>為必填欄位</p>
+<div class="container col-12 mx-auto">
+  <form action="/records/{{record._id}}?_method=PUT" method="post" id="form" novalidate>
+    <div class="form-group row">
+      <label for="name" class="col-sm-3 col-form-control">名稱<span class="requiredInput">*</span>：</label>
+      <input type="text" class="form-control col-sm-9" id="name" name="name" value="{{record.name}}" required>
+      <div class="invalid-feedback">
+        請輸入支出項目
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="date" class="col-sm-3 col-form-control">日期<span class="requiredInput">*</span>：</label>
+      <input type="date" class="form-control col-sm-9" id="date" name="date" value="{{dateStr}}" required>
+    </div>
+
+    <div class="form-group row">
+      <label for="category" class="col-sm-3 col-form-control">類別<span class="requiredInput">*</span>：</label>
+      <input list="category" class="form-control col-sm-9" placeholder="" value="{{cat.name}}" name="category" required>
+      <datalist id="category">
+        {{#each categories}}
+        <option value="{{this.name}}">{{this.name}}</option>
+        {{/each}}
+      </datalist>
+      <div class="invalid-feedback">
+        請選擇任一類別或直接輸入新增類別
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="amount" class="col-sm-3 col-form-control">金額<span class="requiredInput">*</span>：</label>
+      <input type="number" class="form-control col-sm-9" id="amount" name="amount" value="{{record.amount}}"
+        placeholder="168" required>
+      <div class="invalid-feedback">
+        請輸入數字金額
+      </div>
+    </div>
+
+    <button type="submit" class="mt-5 btn btn-info btn-block">Save</button>
+  </form>
+</div>
+
+<script>
+  const form = document.querySelector('#form')
+  form.addEventListener('submit', function onSubmitClicked(event) {
+    if (!form.checkValidity()) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    form.classList.add('was-validated')
+  })
+</script>

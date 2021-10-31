@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const exphbs = require('express-handlebars')
 const hbs = require('handlebars')
+const methodOverride = require('method-override')
 const routes = require('./routes')
 const PORT = 3000
 
@@ -32,6 +33,7 @@ hbs.registerHelper('categoryIcon', function (CATEGORY, category, categoryId) {  
 
 app.use(express.static("public"))
 app.use(express.urlencoded({ extended: true }))
+app.use(methodOverride('_method'))
 
 // set router
 app.use(routes)
