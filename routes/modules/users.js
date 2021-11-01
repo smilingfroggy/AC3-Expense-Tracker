@@ -14,6 +14,7 @@ router.post('/login', passport.authenticate('local', {
 
 router.get('/logout', (req, res) => {
   req.logout()
+  req.flash("success_msg", "您已成功登出")
   res.redirect('/users/login')
 })
 
@@ -23,24 +24,28 @@ router.get('/register', (req, res) => {
 
 router.post('/register', (req, res) => {
   const { name, email, password, confirmPassword } = req.body
+  const errors = []
   Users.findOne({ email })
     .lean()
     .then(user => {
       console.log(user)
       if (user) { //檢查email是否重複註冊
         console.log('此email已被註冊')
-        return res.render('register', { name, email, password, confirmPassword })
-      } else if (password !== confirmPassword) {
+        errors.push({ message: "此email已註冊過"})
+      } 
+      if (password !== confirmPassword) {
         //檢查輸入密碼是否相同
-        console.log('請檢查兩次輸入的密碼')
-        return res.render('register', { name, email, password, confirmPassword })
+        errors.push({ message: "請檢查兩次輸入的密碼" })
+      } 
+      if (errors.length) {
+        return res.render('register', { errors, name, email, password, confirmPassword })
       } else {
         Users.create({ name, email, password })
           .then(() => {
             res.redirect('/')
             console.log(`name: ${name} registered`)
           })
-      }
+      } 
     })
 })
 
