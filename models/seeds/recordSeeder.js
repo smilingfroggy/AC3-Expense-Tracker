@@ -1,4 +1,5 @@
 const db = require('../../config/mongoose')
+const bcrypt = require('bcryptjs')
 const Users = require('../users')
 const Records = require('../records')
 const Categories = require('../categories')
@@ -54,7 +55,12 @@ const record_content = [
 
 db.once('open', () => {
   Promise.all(Array.from(user_content, (user) => {
-    return Users.create({ name: user.name, email: user.email, password: user.password })
+    return bcrypt.genSalt(10)
+      .then(salt => bcrypt.hash(user.password, salt))
+      .then(hash => {
+        return Users.create({ name: user.name, email: user.email, password: hash })
+      })
+      .catch(err => console.log(err))
   }))
     .then((user) => {   //user: [{name:..,email:..,}, {name:..}]
       //無法從user順序建立record，要從record內容指定的userId, categoryId來輸入對應ID
@@ -69,5 +75,6 @@ db.once('open', () => {
           console.log('Records seeder has done')
           process.exit()
         })
+        .catch(err => console.log(err))
     })
 })
