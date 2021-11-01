@@ -37,13 +37,18 @@ app.use(express.static("public"))
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 
-// session
+// session and passport settings
 app.use(session({
   secret: 'secret',
   resave: false,
   saveUninitialized: true
 }))
 usePassport(app)
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated()
+  res.locals.user = req.user
+  return next()
+})
 
 // set router
 app.use(routes)

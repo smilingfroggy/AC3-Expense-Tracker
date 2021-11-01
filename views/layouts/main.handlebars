@@ -17,8 +17,14 @@
 <body>
 
   <nav class="navbar navbar-light bg-light justify-content-between">
-    <a class="navbar-brand mx-3" href="/">我的記賬本</a>
+    <a class="navbar-brand mx-3" href="/">
+      {{#if isAuthenticated}}{{user.name}}的{{else}}我的{{/if}}記賬本
+    </a>
+    {{#if isAuthenticated}}
+    <a class="navbar-nav mx-3" href="/users/logout">登出</a>
+    {{else}}
     <a class="navbar-nav mx-3" href="/users/login">登入</a>
+    {{/if}}
   </nav>
 
   <div class="container mt-3" style="max-width: 600px">
