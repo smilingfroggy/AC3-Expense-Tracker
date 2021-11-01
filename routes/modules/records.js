@@ -25,6 +25,7 @@ router.get('/new', (req, res) => {
 router.post('/new', (req, res) => {
   // console.log(req.body) //{ name: 'test', date: '2021-10-29', category: '交通出行', amount: '15' }
   const { name, date, category, amount } = req.body
+  const userId = req.user._id
 
   // if category is not in Categories => create first
   Categories.findOne({ name: category })
@@ -32,8 +33,7 @@ router.post('/new', (req, res) => {
       if (cat) {
 
         Records.create({
-          name, date, categoryId: cat._id, amount,
-          // TODO: userId: user._id
+          name, date, userId, categoryId: cat._id, amount,
         })
         console.log(`Created ${name} record`)
       }
@@ -44,8 +44,7 @@ router.post('/new', (req, res) => {
           .then(cat => {
             console.log(`Created ${cat.name}`)
             Records.create({
-              name, date, categoryId: cat._id, amount,
-              // TODO: userId: user._id
+              name, date, userId, categoryId: cat._id, amount,
             })
             console.log(`Created ${name} record`)
           })
@@ -60,9 +59,8 @@ router.post('/new', (req, res) => {
 // edit page
 router.get('/edit/:recordId', (req, res) => {
   const recordId = req.params.recordId
-  // const userId = req.body.userId
-  // Users.findOne({ userId })
-  Records.findOne({ _id: recordId })
+  const userId = req.user._id
+  Records.findOne({ _id: recordId, userId })
     .lean()
     .then(record => {
       // TODO: 日期格式轉換成 YYYY - MM - DD
@@ -104,12 +102,13 @@ router.get('/edit/:recordId', (req, res) => {
 
 router.put('/:recordId', (req, res) => {
   const { name, date, category, amount } = req.body
+  const userId = req.user._id
   const recordId = req.params.recordId
   // if category is not in Categories => create first
   Categories.findOne({ name: category })
     .then(cat => {
       if (cat) {
-        Records.findOne({ _id: recordId })
+        Records.findOne({ _id: recordId, userId })
           .then(record => {
             record.name = name
             record.date = date
@@ -124,7 +123,7 @@ router.put('/:recordId', (req, res) => {
           name: category
         })
           .then(cat => {
-            Records.findOne({ _id: recordId })
+            Records.findOne({ _id: recordId, userId })
               .then(record => {
                 record.name = name
                 record.date = date
@@ -142,11 +141,11 @@ router.put('/:recordId', (req, res) => {
 
 // delete record
 router.delete('/:recordId', (req, res) => {
+  const userId = req.user._id
   const recordId = req.params.recordId
-  console.log("request to detete ID: ", recordId)
-  Records.findOne({ _id: recordId })
+  Records.findOne({ _id: recordId, userId })
     .then(record => {
-      console.log(record.name, "deleting")
+      // console.log(record.name, "deleting")
       record.remove()
     })
     .then(() => res.redirect('/'))

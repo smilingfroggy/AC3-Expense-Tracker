@@ -22,7 +22,7 @@ const recordsSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'Users',
-    required: false,   //僅測試使用false
+    required: true,
     index: true
   }
 })

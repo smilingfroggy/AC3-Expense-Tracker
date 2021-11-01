@@ -6,10 +6,11 @@ const Records = require('../../models/records')
 const UserId = require('../../models/users')
 
 router.get('/', (req, res) => {
+  const userId = req.user._id
   Categories.find()
     .lean()
     .then(categories => {
-      Records.find()  //TODO: 找符合userID的紀錄
+      Records.find({ userId })
         .lean()
         .then(records => {  // [{_id:..,name:"",...},{},{}...]
           let totalAmount = 0
