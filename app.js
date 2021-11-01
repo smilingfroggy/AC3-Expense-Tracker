@@ -4,6 +4,7 @@ const exphbs = require('express-handlebars')
 const hbs = require('handlebars')
 const methodOverride = require('method-override')
 const session = require('express-session')
+const usePassport = require('./config/passport')
 const routes = require('./routes')
 const PORT = 3000
 
@@ -42,6 +43,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }))
+usePassport(app)
 
 // set router
 app.use(routes)
