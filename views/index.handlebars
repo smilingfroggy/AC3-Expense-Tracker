@@ -1,12 +1,12 @@
 <div class="btn-group">
-  <form action="/sort?_method=PUT" method="post">
+  <form action="/category?_method=PUT" method="post">
     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
       aria-expanded="false">
       類別
     </button>
     <div class="dropdown-menu">
       {{#each categories}}
-      <button type="submit" class="dropdown-item" name="sort" value="{{this.name}}">{{this.name}}</button>
+      <button type="submit" class="dropdown-item" name="categorySelected" value="{{this.name}}">{{this.name}}</button>
       {{/each}}
     </div>
   </form>
