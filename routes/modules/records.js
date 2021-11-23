@@ -63,37 +63,38 @@ router.get('/edit/:recordId', (req, res) => {
   Records.findOne({ _id: recordId, userId })
     .lean()
     .then(record => {
-      // TODO: 日期格式轉換成 YYYY - MM - DD
+      // 日期格式轉換成 YYYY - MM - DD
       console.log(record.date.toString())   //Tue Apr 23 2019 00:00:00 GMT+0800 (台北標準時間
       let dateStr = record.date.toString().slice(4, 15)  //Apr 23 2019
+      let monthStr = dateStr.slice(0, 3)
       let months = {
-        "Jen": 01,
-        "Feb": 02,
-        "Mar": 03,
-        "Apr": 04,
-        "May": 05,
-        "Jun": 06,
-        "Jul": 07,
-        "Aug": 08,
-        "Sep": 09,
-        "Oct": 10,
-        "Nov": 11,
-        "Dec": 12
+        Jen: '01',
+        Feb: '02',
+        Mar: '03',
+        Apr: '04',
+        May: '05',
+        Jun: '06',
+        Jul: '07',
+        Aug: '08',
+        Sep: '09',
+        Oct: '10',
+        Nov: '11',
+        Dec: '12'
       }
-      // for ( let month in months ) {
-      //   if (month == dateStr.slice(0, 3)) {   //problem: 找不到相月份，formattedDate is undefined
-      //     let formattedDate = dateStr.slice(7,11) + "-" + months[month].toString() + "-" + dateStr.slice(4,6)
-      //   }
-      // }
-      // console.log(formattedDate)
+      let formattedDate = ""   // YYYY - MM - DD
+      for (let month in months) {
+        if (month == monthStr) {
+          formattedDate = dateStr.slice(7, 11) + "-" + months[month] + "-" + dateStr.slice(4, 6)
+        }
+      }
+      // 取得所有類別及此項類別
       Categories.find()
         .lean()
         .then(categories => {
           Categories.findOne({ _id: record.categoryId })
             .lean()
             .then(cat => {
-              // console.log(cat)
-              res.render('edit', { record, dateStr, categories, cat })
+              res.render('edit', { record, categories, cat, formattedDate })
             })
         })
     })
