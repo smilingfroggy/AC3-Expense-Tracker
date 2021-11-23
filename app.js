@@ -24,17 +24,14 @@ hbs.registerHelper('formatDate', function (date) {
   const dateOriginal = date.toString()
   return dateOriginal.slice(0, 10);
 })
-// TODO: registerHelper: categoryIcon
-hbs.registerHelper('categoryIcon', function (CATEGORY, category, categoryId) {   //record:{_id:...} categories:[{_id:..name:..}]
-  // console.log("app.js Cat:", category)   //OK .handlebars需加上{{../}}否則為undefined
-  // console.log(categoryId)  //new ObjectId("617d7b0cd3eae9b36d42a00b")
+hbs.registerHelper('getCategoryIcon', function (CATEGORY, category, categoryId) {   //record:{_id:...} categories:[{_id:..name:..}]
   for (let i = 0; i < category.length; i++) {
-    // console.log('catID', category[i]._id)  //new ObjectId("617d7b0cd3eae9b36d42a00b")
-    if (category[i]._id == categoryId) {  //PROBLEM: 找不到符合的id
+    if (category[i]._id.toString() == categoryId.toString()) {  //兩者型別都是object需要轉換，才能找到一樣的id
       let catName = category[i].name
+      let catIcon = CATEGORY[catName]
+      return new hbs.SafeString(catIcon)
     }
   }
-  // return CATEGORY.catName
 })
 
 app.use(express.static("public"))
