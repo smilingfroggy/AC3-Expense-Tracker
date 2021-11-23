@@ -31,24 +31,22 @@ router.get('/', (req, res) => {
 router.put('/category', (req, res) => {
   const userId = req.user._id
   const categorySelected = req.body.categorySelected  // e.g."家居物業"
-  Categories.find()
-    .lean()
-    .then(categories => {
-      Categories.findOne({ name: categorySelected })
+  return Promise.all([
+    Categories.find().lean(),
+    Categories.findOne({ name: categorySelected }).lean()
+  ])
+    .then(([categories, category]) => {
+      const categoryId = category._id.toString()
+      Records.find({ userId, categoryId })
         .lean()
-        .then(category => {
-          const categoryId = category._id.toString()
-          Records.find({ userId, categoryId })
-            .lean()
-            .then(records => {
-              let totalAmount = 0
-              for (let i = 0; i < records.length; i++) {
-                totalAmount += records[i].amount
-              }
-              res.render('index', { categories, records, totalAmount, CATEGORY })
-            })
-            .catch(err => console.log(err))
+        .then(records => {
+          let totalAmount = 0
+          for (let i = 0; i < records.length; i++) {
+            totalAmount += records[i].amount
+          }
+          res.render('index', { categories, records, totalAmount, CATEGORY })
         })
+        .catch(err => console.log(err))
     })
 })
 
