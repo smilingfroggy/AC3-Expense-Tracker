@@ -20,15 +20,11 @@
 
     <div class="form-group row">
       <label for="category" class="col-sm-3 col-form-control">類別<span class="requiredInput">*</span>：</label>
-      <input list="category" class="form-control col-sm-9" placeholder="" value="" name="category" required>
-      <datalist id="category">
+      <select class="form-control col-sm-9" name="category" id="category" required>
         {{#each category}}
-        <option value="{{this.name}}">{{this.name}}</option>
+         <option value="{{this.name}}">{{this.name}}</option>
         {{/each}}
-      </datalist>
-      <div class="invalid-feedback">
-        請選擇任一類別或直接輸入新增類別
-      </div>
+      </select>
     </div>
 
     <div class="form-group row">
